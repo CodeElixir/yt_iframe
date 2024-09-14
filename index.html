@@ -6,7 +6,7 @@
     <title>YouTube Player</title>
 </head>
 <body style="margin: 0; padding: 0; overflow: hidden;">
-<div id="player" style="position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 120px);"></div>
+<div id="player"></div>
 <script>
     const randomPlayerId = 'player' + Date.now();
     document.getElementById('player').id = randomPlayerId;
@@ -14,7 +14,7 @@
     const parsedUrl = new URL(window.location.href);
     const UrlQueryData = parsedUrl.searchParams.get('data');
 
-    const {videoId, progressUpdateInterval, contentScale, allowWebViewZoom, ...playerVars}  = JSON.parse(UrlQueryData);
+    const {videoId, progressUpdateInterval, contentScale, allowWebViewZoom, playerStyle, ...playerVars}  = JSON.parse(UrlQueryData);
 
     let metaString = '';
     if (contentScale) {
@@ -27,6 +27,14 @@
 
     const viewport = document.querySelector('meta[name=viewport]');
     viewport.setAttribute('content', 'width=device-width, ' + metaString);
+
+    // Convert playerStyle object to a CSS style string
+    if (playerStyle) {
+        document.getElementById(randomPlayerId).style.cssText = Object.entries(playerStyle)
+            .map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:${value}`)
+            .join('; ');
+    }
+
 
     var tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
