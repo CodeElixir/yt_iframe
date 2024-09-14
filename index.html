@@ -13,9 +13,8 @@
 
     const parsedUrl = new URL(window.location.href);
     const UrlQueryData = parsedUrl.searchParams.get('data');
-    const queryParams = JSON.parse(UrlQueryData);
 
-    const data  = JSON.parse(UrlQueryData);
+    const {videoId, progressUpdateInterval, ...playerVars}  = JSON.parse(UrlQueryData);
 
     // const {
     //     end,
@@ -35,32 +34,32 @@
     //     modestbranding,
     //     cc_load_policy,
     // } = data;
-    const playerVars = {
-        // autoplay: data.autoplay || 0,
-        cc_lang_pref: data.cc_lang_pref || '',
-        cc_load_policy: data.cc_load_policy || 0,
-        color: data.color || 'red',
-        controls: data.controls || 1,
-        // disablekb: data.disablekb || 0,
-        // enablejsapi: data.enablejsapi || 0,
-        end: data.end || undefined,
-        fs: data.fs || 1,
-        hl: data.hl || undefined,
-        iv_load_policy: data.iv_load_policy || 1,
-        list: data.list || '',
-        listType: data.listType || '',
-        loop: data.loop || 0,
-        modestbranding: data.modestbranding || 0,
-        // origin: data.origin || window.location.origin,
-        playlist: data.playlist || '',
-        playsinline: data.playsinline || 0,
-        rel: data.rel || 1,
-        // showinfo: data.showinfo || 1,  // Deprecated but still used in some cases
-        start: data.start || 0,
-        // widget_referrer: queryParams.widget_referrer || ''
-    };
+    // const playerVars = {
+    //     // autoplay: data.autoplay || 0,
+    //     cc_lang_pref: data.cc_lang_pref || '',
+    //     cc_load_policy: data.cc_load_policy || 0,
+    //     color: data.color || 'red',
+    //     controls: data.controls || 1,
+    //     // disablekb: data.disablekb || 0,
+    //     // enablejsapi: data.enablejsapi || 0,
+    //     end: data.end || undefined,
+    //     fs: data.fs || 1,
+    //     hl: data.hl || undefined,
+    //     iv_load_policy: data.iv_load_policy || 1,
+    //     list: data.list || '',
+    //     listType: data.listType || '',
+    //     loop: data.loop || 0,
+    //     modestbranding: data.modestbranding || 0,
+    //     // origin: data.origin || window.location.origin,
+    //     playlist: data.playlist || '',
+    //     playsinline: data.playsinline || 0,
+    //     rel: data.rel || 1,
+    //     // showinfo: data.showinfo || 1,  // Deprecated but still used in some cases
+    //     start: data.start || 0,
+    //     // widget_referrer: queryParams.widget_referrer || ''
+    // };
 
-    const videoId = queryParams.videoId || '';
+    // const videoId = queryParams.videoId || '';
 
     var tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
@@ -72,7 +71,7 @@
         player = new YT.Player(randomPlayerId, {
             height: "1000",
             width: "1000",
-            videoId: data.videoId,
+            videoId: videoId,
             playerVars: playerVars,
             // events: {
             //     onReady: onPlayerReady,
