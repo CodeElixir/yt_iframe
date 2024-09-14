@@ -11,7 +11,6 @@
 
     const parsedUrl = new URL(window.location.href);
     const UrlQueryData = parsedUrl.searchParams.get('data');
-
     const {
         end,
         list,
@@ -33,17 +32,32 @@
         showClosedCaptions_s,
     } = JSON.parse(UrlQueryData);
 
-    var tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName("script")[0];
+    function sendMessageToRN(msg) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(msg));
+    }
+
+    let metaString = '';
+    if (contentScale_s) {
+        metaString += `initial-scale=${contentScale_s}, `;
+    }
+
+    if (!allowWebViewZoom) {
+        metaString += `maximum-scale=${contentScale_s}`;
+    }
+
+    const viewport = document.querySelector('meta[name=viewport]');
+    viewport.setAttribute('content', 'width=device-width, ' + metaString);
+
+    var tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     var player;
-
     function onYouTubeIframeAPIReady() {
-        player = new YT.Player("player", {
-            height: "100%",
-            width: "100%",
+        player = new YT.Player(randomPlayerId, {
+            width: '1000',
+            height: '1000',
             videoId: videoId_s,
             playerVars: {
                 end: end,
@@ -64,74 +78,90 @@
                 cc_load_policy: showClosedCaptions_s,
             },
             events: {
-                // onReady: onPlayerReady,
-                // onStateChange: onPlayerStateChange,
-                // onPlaybackRateChange: onPlayerPlaybackRateChange,
-                // onError: onPlayerError,
+                onReady: onPlayerReady,
+                onError: onPlayerError,
+                onStateChange: onPlayerStateChange,
+                onPlaybackRateChange: onPlaybackRateChange,
+                onPlaybackQualityChange: onPlaybackQualityChange,
             },
         });
-        console.log(player)
-    }
-
-    function onPlayerReady(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({event: "onReady", data: event})
-        );
-    }
-
-    function onPlayerStateChange(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({event: "onStateChange", data: event.data})
-        );
-
-        if (event.data === 2 || event.data === 1) {
-            // Paused or Playing after a seek
-            window.ReactNativeWebView.postMessage(
-                JSON.stringify({
-                    event: "onSeek",
-                    data: player.getCurrentTime(),
-                })
-            );
-        }
-    }
-
-    function onPlayerPlaybackRateChange(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({event: "onPlaybackRateChange", data: event.data})
-        );
     }
 
     function onPlayerError(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({event: "onError", data: event.data})
-        );
+        sendMessageToRN({eventType: 'playerError', data: event.data});
     }
 
-    window.addEventListener("message", (event) => {
-        var message = JSON.parse(event.data);
-        if (message.command === "pause") {
-            player.pauseVideo();
-        } else if (message.command === "play") {
-            player.playVideo();
-        } else if (message.command === "mute") {
-            player.mute();
-        } else if (message.command === "unmute") {
-            player.unMute();
-        } else if (message.command === "seekTo") {
-            player.seekTo(message.time, true);
+    function onPlaybackRateChange(event) {
+        sendMessageToRN({eventType: 'playbackRateChange', data: event.data});
+    }
+
+    function onPlaybackQualityChange(event) {
+        sendMessageToRN({eventType: 'playerQualityChange', data: event.data});
+    }
+
+    function onPlayerReady(event) {
+        sendMessageToRN({eventType: 'playerReady'});
+    }
+
+    function onPlayerStateChange(event) {
+        sendMessageToRN({eventType: 'playerStateChange', data: event.data});
+    }
+
+    var isFullScreen = false;
+    function onFullScreenChange() {
+        isFullScreen =
+            document.fullscreenElement ||
+            document.msFullscreenElement ||
+            document.mozFullScreenElement ||
+            document.webkitFullscreenElement;
+
+        sendMessageToRN({
+            eventType: 'fullScreenChange',
+            data: Boolean(isFullScreen),
+        });
+    }
+
+    document.addEventListener('fullscreenchange', onFullScreenChange);
+    document.addEventListener('msfullscreenchange', onFullScreenChange);
+    document.addEventListener('mozfullscreenchange', onFullScreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullScreenChange);
+
+    window.addEventListener('message', function (event) {
+        const {data} = event;
+
+        try {
+            const parsedData = JSON.parse(data);
+            const {eventName, meta} = parsedData;
+
+            switch (eventName) {
+                case 'playVideo':
+                    player.playVideo();
+                    break;
+
+                case 'pauseVideo':
+                    player.pauseVideo();
+                    break;
+
+                case 'muteVideo':
+                    player.mute();
+                    break;
+
+                case 'unMuteVideo':
+                    player.unMute();
+                    break;
+
+                case 'setVolume':
+                    player.setVolume(meta.volume);
+                    break;
+
+                case 'setPlaybackRate':
+                    player.setPlaybackRate(meta.playbackRate);
+                    break;
+            }
+        } catch (error) {
+            console.error('Error parsing data', event, error);
         }
     });
-
-    setInterval(() => {
-        if (player && player.getCurrentTime) {
-            window.ReactNativeWebView.postMessage(
-                JSON.stringify({
-                    event: "onProgress",
-                    data: player.getCurrentTime(),
-                })
-            );
-        }
-    }, 1000);
 </script>
 </body>
 </html>
