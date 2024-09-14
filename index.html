@@ -36,17 +36,17 @@
         window.ReactNativeWebView.postMessage(JSON.stringify(msg));
     }
 
-    let metaString = '';
-    if (contentScale_s) {
-        metaString += `initial-scale=${contentScale_s}, `;
-    }
+    // let metaString = '';
+    // if (contentScale_s) {
+    //     metaString += `initial-scale=${contentScale_s}, `;
+    // }
+    //
+    // if (!allowWebViewZoom) {
+    //     metaString += `maximum-scale=${contentScale_s}`;
+    // }
 
-    if (!allowWebViewZoom) {
-        metaString += `maximum-scale=${contentScale_s}`;
-    }
-
-    const viewport = document.querySelector('meta[name=viewport]');
-    viewport.setAttribute('content', 'width=device-width, ' + metaString);
+    // const viewport = document.querySelector('meta[name=viewport]');
+    // viewport.setAttribute('content', 'width=device-width, ' + metaString);
 
     var tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
@@ -78,11 +78,11 @@
                 cc_load_policy: showClosedCaptions_s,
             },
             events: {
-                onReady: onPlayerReady,
-                onError: onPlayerError,
-                onStateChange: onPlayerStateChange,
-                onPlaybackRateChange: onPlaybackRateChange,
-                onPlaybackQualityChange: onPlaybackQualityChange,
+                // onReady: onPlayerReady,
+                // onError: onPlayerError,
+                // onStateChange: onPlayerStateChange,
+                // onPlaybackRateChange: onPlaybackRateChange,
+                // onPlaybackQualityChange: onPlaybackQualityChange,
             },
         });
     }
