@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -14,50 +14,24 @@
 
     const {
         end,
-        rel,
         list,
         color,
-        loop,
         start,
-        playsinline,
-        hl,
-        playlist,
+        rel_s,
+        loop_s,
         listType,
-        controls,
-        fs,
-        cc_lang_pref,
+        playerLang,
+        playlist,
+        videoId_s,
+        controls_s,
+        cc_lang_pref_s,
+        contentScale_s,
+        allowWebViewZoom,
+        modestbranding_s,
         iv_load_policy,
-        modestbranding,
-        cc_load_policy,
-        videoId,
+        preventFullScreen_s,
+        showClosedCaptions_s,
     } = JSON.parse(UrlQueryData);
-
-    console.log(JSON.parse(UrlQueryData));
-    // const playerVars = {
-    //     autoplay,
-    //     cc_lang_pref,
-    //     cc_load_policy,
-    //     color,
-    //     controls,
-    //     disablekb,
-    //     enablejsapi,
-    //     end,
-    //     fs,
-    //     hl,
-    //     iv_load_policy,
-    //     list,
-    //     listType,
-    //     loop,
-    //     modestbranding,
-    //     origin,
-    //     playlist,
-    //     playsinline,
-    //     rel,
-    //     showinfo,
-    //     start,
-    //     widget_referrer,
-    //     videoId,
-    // } = JSON.parse(UrlQueryData);
 
     var tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
@@ -70,30 +44,30 @@
         player = new YT.Player("player", {
             height: "100%",
             width: "100%",
-            videoId: videoId,
+            videoId: videoId_s,
             playerVars: {
-                end,
-                rel,
-                list,
-                color,
-                loop,
-                start,
-                playsinline,
-                hl,
-                playlist,
-                listType,
-                controls,
-                fs,
-                cc_lang_pref,
-                iv_load_policy,
-                modestbranding,
-                cc_load_policy,
+                end: end,
+                rel: rel_s,
+                list: list,
+                color: color,
+                loop: loop_s,
+                start: start,
+                playsinline: 1,
+                hl: playerLang,
+                playlist: playlist,
+                listType: listType,
+                controls: controls_s,
+                fs: preventFullScreen_s,
+                cc_lang_pref: cc_lang_pref_s,
+                iv_load_policy: iv_load_policy,
+                modestbranding: modestbranding_s,
+                cc_load_policy: showClosedCaptions_s,
             },
             events: {
-                onReady: onPlayerReady,
-                onStateChange: onPlayerStateChange,
-                onPlaybackRateChange: onPlayerPlaybackRateChange,
-                onError: onPlayerError,
+                // onReady: onPlayerReady,
+                // onStateChange: onPlayerStateChange,
+                // onPlaybackRateChange: onPlayerPlaybackRateChange,
+                // onError: onPlayerError,
             },
         });
         console.log(player)
