@@ -15,34 +15,53 @@
     const UrlQueryData = parsedUrl.searchParams.get('data');
     const queryParams = JSON.parse(UrlQueryData);
 
-    const playerVars = {
-        // autoplay: queryParams.autoplay || 0,
-        cc_lang_pref: queryParams.cc_lang_pref || '',
-        cc_load_policy: queryParams.cc_load_policy || 0,
-        color: queryParams.color || 'red',
-        controls: queryParams.controls || 1,
-        // disablekb: queryParams.disablekb || 0,
-        // enablejsapi: queryParams.enablejsapi || 0,
-        end: queryParams.end || undefined,
-        fs: queryParams.fs || 1,
-        hl: queryParams.hl || undefined,
-        iv_load_policy: queryParams.iv_load_policy || 1,
-        list: queryParams.list || '',
-        listType: queryParams.listType || '',
-        loop: queryParams.loop || 0,
-        modestbranding: queryParams.modestbranding || 0,
-        // origin: queryParams.origin || window.location.origin,
-        playlist: queryParams.playlist || '',
-        playsinline: queryParams.playsinline || 0,
-        rel: queryParams.rel || 1,
-        // showinfo: queryParams.showinfo || 1,  // Deprecated but still used in some cases
-        start: queryParams.start || 0,
-        // widget_referrer: queryParams.widget_referrer || ''
+    const {
+        end,
+        list,
+        color,
+        start,
+        rel_s,
+        loop_s,
+        listType,
+        playerLang,
+        playlist,
+        videoId_s,
+        controls_s,
+        cc_lang_pref_s,
+        contentScale_s,
+        allowWebViewZoom,
+        modestbranding_s,
+        iv_load_policy,
+        preventFullScreen_s,
+        showClosedCaptions_s,
+    } = JSON.parse(UrlQueryData);
+
+    // const playerVars = {
+    //     // autoplay: queryParams.autoplay || 0,
+    //     cc_lang_pref: queryParams.cc_lang_pref || '',
+    //     cc_load_policy: queryParams.cc_load_policy || 0,
+    //     color: queryParams.color || 'red',
+    //     controls: queryParams.controls || 1,
+    //     // disablekb: queryParams.disablekb || 0,
+    //     // enablejsapi: queryParams.enablejsapi || 0,
+    //     end: queryParams.end || undefined,
+    //     fs: queryParams.fs || 1,
+    //     hl: queryParams.hl || undefined,
+    //     iv_load_policy: queryParams.iv_load_policy || 1,
+    //     list: queryParams.list || '',
+    //     listType: queryParams.listType || '',
+    //     loop: queryParams.loop || 0,
+    //     modestbranding: queryParams.modestbranding || 0,
+    //     // origin: queryParams.origin || window.location.origin,
+    //     playlist: queryParams.playlist || '',
+    //     playsinline: queryParams.playsinline || 0,
+    //     rel: queryParams.rel || 1,
+    //     // showinfo: queryParams.showinfo || 1,  // Deprecated but still used in some cases
+    //     start: queryParams.start || 0,
+    //     // widget_referrer: queryParams.widget_referrer || ''
     };
 
     const videoId = queryParams.videoId || '';
-
-    console.log(playerVars, videoId, queryParams);
 
     var tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
@@ -54,14 +73,30 @@
         player = new YT.Player(randomPlayerId, {
             height: "1000",
             width: "1000",
-            videoId: videoId,
-            playerVars: playerVars,
-            events: {
-                onReady: onPlayerReady,
-                onStateChange: onPlayerStateChange,
-                onPlaybackRateChange: onPlayerPlaybackRateChange,
-                onError: onPlayerError,
-            },
+            videoId: videoId_s,
+            playerVars: {
+                end: end,
+                rel: rel_s,
+                list: list,
+                color: color,
+                loop: loop_s,
+                start: start,
+                playsinline: 1,
+                hl: playerLang,
+                playlist: playlist,
+                listType: listType,
+                controls: controls_s,
+                fs: preventFullScreen_s,
+                cc_lang_pref: cc_lang_pref_s,
+                iv_load_policy: iv_load_policy,
+                modestbranding: modestbranding_s,
+                cc_load_policy: showClosedCaptions_s,
+            },            // events: {
+            //     onReady: onPlayerReady,
+            //     onStateChange: onPlayerStateChange,
+            //     onPlaybackRateChange: onPlayerPlaybackRateChange,
+            //     onError: onPlayerError,
+            // },
         });
     }
 
@@ -123,7 +158,7 @@
                 })
             );
         }
-    }, queryParams.progressUpdateInterval || 1000);
+    }, 1000);
 </script>
 </body>
 </html>
