@@ -16,13 +16,32 @@
     const queryParams = JSON.parse(UrlQueryData);
 
     const playerVars = {
-        autoplay: queryParams.autoplay || 0,
+        end: end,
+        rel: rel_s,
+        list: list,
+        color: color,
+        loop: loop_s,
+        start: start,
+        playsinline: 1,
+        hl: playerLang,
+        playlist: playlist,
+        listType: listType,
+        controls: controls_s,
+        fs: preventFullScreen_s,
+        cc_lang_pref: cc_lang_pref_s,
+        iv_load_policy: iv_load_policy,
+        modestbranding: modestbranding_s,
+        cc_load_policy: showClosedCaptions_s,
+    };
+
+    const playerVars = {
+        // autoplay: queryParams.autoplay || 0,
         cc_lang_pref: queryParams.cc_lang_pref || '',
         cc_load_policy: queryParams.cc_load_policy || 0,
         color: queryParams.color || 'red',
         controls: queryParams.controls || 1,
-        disablekb: queryParams.disablekb || 0,
-        enablejsapi: queryParams.enablejsapi || 0,
+        // disablekb: queryParams.disablekb || 0,
+        // enablejsapi: queryParams.enablejsapi || 0,
         end: queryParams.end || undefined,
         fs: queryParams.fs || 1,
         hl: queryParams.hl || undefined,
@@ -31,13 +50,13 @@
         listType: queryParams.listType || '',
         loop: queryParams.loop || 0,
         modestbranding: queryParams.modestbranding || 0,
-        origin: queryParams.origin || window.location.origin,
+        // origin: queryParams.origin || window.location.origin,
         playlist: queryParams.playlist || '',
         playsinline: queryParams.playsinline || 0,
         rel: queryParams.rel || 1,
-        showinfo: queryParams.showinfo || 1,  // Deprecated but still used in some cases
+        // showinfo: queryParams.showinfo || 1,  // Deprecated but still used in some cases
         start: queryParams.start || 0,
-        widget_referrer: queryParams.widget_referrer || ''
+        // widget_referrer: queryParams.widget_referrer || ''
     };
 
     const videoId = queryParams.videoId || '';
