@@ -15,27 +15,26 @@
     const UrlQueryData = parsedUrl.searchParams.get('data');
     const queryParams = JSON.parse(UrlQueryData);
 
+    const data  = JSON.parse(UrlQueryData);
+
     const {
         end,
+        rel,
         list,
         color,
+        loop,
         start,
-        rel_s,
-        loop_s,
-        listType,
-        playerLang,
+        playsinline,
+        hl,
         playlist,
-        videoId_s,
-        controls_s,
-        cc_lang_pref_s,
-        contentScale_s,
-        allowWebViewZoom,
-        modestbranding_s,
+        listType,
+        controls,
+        fs,
+        cc_lang_pref,
         iv_load_policy,
-        preventFullScreen_s,
-        showClosedCaptions_s,
-    } = JSON.parse(UrlQueryData);
-
+        modestbranding,
+        cc_load_policy,
+    } = data;
     // const playerVars = {
     //     // autoplay: queryParams.autoplay || 0,
     //     cc_lang_pref: queryParams.cc_lang_pref || '',
@@ -73,25 +72,26 @@
         player = new YT.Player(randomPlayerId, {
             height: "1000",
             width: "1000",
-            videoId: videoId_s,
+            videoId: data.videoId,
             playerVars: {
-                end: end,
-                rel: rel_s,
-                list: list,
-                color: color,
-                loop: loop_s,
-                start: start,
-                playsinline: 1,
-                hl: playerLang,
-                playlist: playlist,
-                listType: listType,
-                controls: controls_s,
-                fs: preventFullScreen_s,
-                cc_lang_pref: cc_lang_pref_s,
-                iv_load_policy: iv_load_policy,
-                modestbranding: modestbranding_s,
-                cc_load_policy: showClosedCaptions_s,
-            },            // events: {
+                end,
+                rel,
+                list,
+                color,
+                loop,
+                start,
+                playsinline,
+                hl,
+                playlist,
+                listType,
+                controls,
+                fs,
+                cc_lang_pref,
+                iv_load_policy,
+                modestbranding,
+                cc_load_policy
+            },
+            // events: {
             //     onReady: onPlayerReady,
             //     onStateChange: onPlayerStateChange,
             //     onPlaybackRateChange: onPlayerPlaybackRateChange,
