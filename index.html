@@ -8,10 +8,15 @@
 <body style="margin: 0; padding: 0; overflow: hidden;">
 <div id="player" style="position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 120px);"></div>
 <script>
-    // Function to get query parameters from the URL using URL and URLSearchParams APIs
+    // Function to get query parameters from the URL
     function getQueryParams() {
-        const parsedUrl = new URL(window.location.href);
-        return Object.fromEntries(parsedUrl.searchParams.entries());
+        const params = {};
+        const queryString = window.location.search.slice(1);
+        queryString.split("&").forEach(param => {
+            const [key, value] = param.split("=");
+            params[decodeURIComponent(key)] = decodeURIComponent(value);
+        });
+        return params;
     }
 
     // Get query parameters and extract playerVars
@@ -24,7 +29,7 @@
         color: queryParams.color || 'red',
         controls: queryParams.controls || 1,
         disablekb: queryParams.disablekb || 0,
-        enablejsapi: queryParams.enablejsapi || 0,
+        enablejsapi: queryParams.enablejsapi || 1,  // Enable JS API by default
         end: queryParams.end || undefined,
         fs: queryParams.fs || 1,
         hl: queryParams.hl || undefined,
@@ -37,13 +42,13 @@
         playlist: queryParams.playlist || '',
         playsinline: queryParams.playsinline || 0,
         rel: queryParams.rel || 1,
-        showinfo: queryParams.showinfo || 1,  // Deprecated but still used in some cases
         start: queryParams.start || 0,
         widget_referrer: queryParams.widget_referrer || ''
     };
 
-    const videoId = queryParams.videoId || '';
+    const videoId = queryParams.videoId || ''; // Ensure this is correctly set
 
+    // YouTube API script injection
     var tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName("script")[0];
@@ -54,7 +59,7 @@
         player = new YT.Player("player", {
             height: "100%",
             width: "100%",
-            videoId: videoId,
+            videoId: videoId, // Make sure this is correctly set
             playerVars: playerVars,
             events: {
                 onReady: onPlayerReady,
@@ -114,6 +119,7 @@
         }
     });
 
+    // Send progress updates to React Native every second
     setInterval(() => {
         if (player && player.getCurrentTime) {
             window.ReactNativeWebView.postMessage(
