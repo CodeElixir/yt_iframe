@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width," />
     <title>YouTube Player</title>
 </head>
 <body style="margin: 0; padding: 0; overflow: hidden;">
@@ -14,7 +14,19 @@
     const parsedUrl = new URL(window.location.href);
     const UrlQueryData = parsedUrl.searchParams.get('data');
 
-    const {videoId, progressUpdateInterval, ...playerVars}  = JSON.parse(UrlQueryData);
+    const {videoId, progressUpdateInterval, contentScale, allowWebViewZoom, ...playerVars}  = JSON.parse(UrlQueryData);
+
+    let metaString = '';
+    if (contentScale) {
+        metaString += `initial-scale=${contentScale}, `;
+    }
+
+    if (!allowWebViewZoom) {
+        metaString += `maximum-scale=${contentScale}`;
+    }
+
+    const viewport = document.querySelector('meta[name=viewport]');
+    viewport.setAttribute('content', 'width=device-width, ' + metaString);
 
     var tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
