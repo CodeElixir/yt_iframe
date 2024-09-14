@@ -1,135 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Player</title>
-</head>
-<body style="margin: 0; padding: 0; overflow: hidden;">
-<div id="player" style="position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 120px);"></div>
-<script>
-    // Function to get query parameters from the URL
-    function getQueryParams() {
-        const params = {};
-        const queryString = window.location.search.slice(1);
-        queryString.split("&").forEach(param => {
-            const [key, value] = param.split("=");
-            params[decodeURIComponent(key)] = decodeURIComponent(value);
-        });
-        return params;
-    }
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>YouTube Player</title>
+			</head>
+			<body style="margin: 0; padding: 0; overflow: hidden;">
+				<div id="player" style="position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 120px);"></div>
+				<script>
+        // Function to get query parameters from the URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.slice(1);
+            queryString.split("&").forEach(param => {
+                const [key, value] = param.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            });
+            return params;
+        }
 
-    // Get query parameters and extract playerVars
-    const queryParams = getQueryParams();
+        // Get query parameters and extract playerVars
+        const queryParams = getQueryParams();
 
-    const playerVars = {
-        autoplay: queryParams.autoplay || 0,
-        cc_lang_pref: queryParams.cc_lang_pref || '',
-        cc_load_policy: queryParams.cc_load_policy || 0,
-        color: queryParams.color || 'red',
-        controls: queryParams.controls || 1,
-        disablekb: queryParams.disablekb || 0,
-        enablejsapi: queryParams.enablejsapi || 1,  // Enable JS API by default
-        end: queryParams.end || undefined,
-        fs: queryParams.fs || 1,
-        hl: queryParams.hl || undefined,
-        iv_load_policy: queryParams.iv_load_policy || 1,
-        list: queryParams.list || '',
-        listType: queryParams.listType || '',
-        loop: queryParams.loop || 0,
-        modestbranding: queryParams.modestbranding || 0,
-        origin: queryParams.origin || window.location.origin,
-        playlist: queryParams.playlist || '',
-        playsinline: queryParams.playsinline || 0,
-        rel: queryParams.rel || 1,
-        start: queryParams.start || 0,
-        widget_referrer: queryParams.widget_referrer || ''
-    };
+        const playerVars = {
+            autoplay: queryParams.autoplay || 0,
+            cc_lang_pref: queryParams.cc_lang_pref || '',
+            cc_load_policy: queryParams.cc_load_policy || 0,
+            color: queryParams.color || 'red',
+            controls: queryParams.controls || 1,
+            disablekb: queryParams.disablekb || 0,
+            // enablejsapi: queryParams.enablejsapi || 0,
+            end: queryParams.end || undefined,
+            fs: queryParams.fs || 1,
+            hl: queryParams.hl || undefined,
+            iv_load_policy: queryParams.iv_load_policy || 1,
+            list: queryParams.list || '',
+            listType: queryParams.listType || '',
+            loop: queryParams.loop || 0,
+            modestbranding: queryParams.modestbranding || 0,
+            origin: queryParams.origin || window.location.origin,
+            playlist: queryParams.playlist || '',
+            playsinline: queryParams.playsinline || 0,
+            rel: queryParams.rel || 1,
+            // showinfo: queryParams.showinfo || 1,  // Deprecated but still used in some cases
+            start: queryParams.start || 0,
+            // widget_referrer: queryParams.widget_referrer || ''
+        };
 
-    const videoId = queryParams.videoId || ''; // Ensure this is correctly set
+        const videoId = queryParams.videoId || '';
 
-    // YouTube API script injection
-    var tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName("script")[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        var tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    var player;
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player("player", {
-            height: "100%",
-            width: "100%",
-            videoId: videoId, // Make sure this is correctly set
-            playerVars: playerVars,
-            events: {
-                onReady: onPlayerReady,
-                onStateChange: onPlayerStateChange,
-                onPlaybackRateChange: onPlayerPlaybackRateChange,
-                onError: onPlayerError,
-            },
-        });
-    }
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player("player", {
+                height: "100%",
+                width: "100%",
+                videoId: videoId,
+                playerVars: playerVars,
+                events: {
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange,
+                    onPlaybackRateChange: onPlayerPlaybackRateChange,
+                    onError: onPlayerError,
+                },
+            });
+        }
 
-    function onPlayerReady(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({ event: "onReady", data: event })
-        );
-    }
-
-    function onPlayerStateChange(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({ event: "onStateChange", data: event.data })
-        );
-
-        if (event.data === 2 || event.data === 1) {
-            // Paused or Playing after a seek
+        function onPlayerReady(event) {
             window.ReactNativeWebView.postMessage(
-                JSON.stringify({
-                    event: "onSeek",
-                    data: player.getCurrentTime(),
-                })
+                JSON.stringify({ event: "onReady", data: event })
             );
         }
-    }
 
-    function onPlayerPlaybackRateChange(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({ event: "onPlaybackRateChange", data: event.data })
-        );
-    }
-
-    function onPlayerError(event) {
-        window.ReactNativeWebView.postMessage(
-            JSON.stringify({ event: "onError", data: event.data })
-        );
-    }
-
-    window.addEventListener("message", (event) => {
-        var message = JSON.parse(event.data);
-        if (message.command === "pause") {
-            player.pauseVideo();
-        } else if (message.command === "play") {
-            player.playVideo();
-        } else if (message.command === "mute") {
-            player.mute();
-        } else if (message.command === "unmute") {
-            player.unMute();
-        } else if (message.command === "seekTo") {
-            player.seekTo(message.time, true);
-        }
-    });
-
-    // Send progress updates to React Native every second
-    setInterval(() => {
-        if (player && player.getCurrentTime) {
+        function onPlayerStateChange(event) {
             window.ReactNativeWebView.postMessage(
-                JSON.stringify({
-                    event: "onProgress",
-                    data: player.getCurrentTime(),
-                })
+                JSON.stringify({ event: "onStateChange", data: event.data })
+            );
+
+            if (event.data === 2 || event.data === 1) {
+                // Paused or Playing after a seek
+                window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                        event: "onSeek",
+                        data: player.getCurrentTime(),
+                    })
+                );
+            }
+        }
+
+        function onPlayerPlaybackRateChange(event) {
+            window.ReactNativeWebView.postMessage(
+                JSON.stringify({ event: "onPlaybackRateChange", data: event.data })
             );
         }
-    }, queryParams.progressUpdateInterval || 1000);
-</script>
-</body>
-</html>
+
+        function onPlayerError(event) {
+            window.ReactNativeWebView.postMessage(
+                JSON.stringify({ event: "onError", data: event.data })
+            );
+        }
+
+        window.addEventListener("message", (event) => {
+            var message = JSON.parse(event.data);
+            if (message.command === "pause") {
+                player.pauseVideo();
+            } else if (message.command === "play") {
+                player.playVideo();
+            } else if (message.command === "mute") {
+                player.mute();
+            } else if (message.command === "unmute") {
+                player.unMute();
+            } else if (message.command === "seekTo") {
+                player.seekTo(message.time, true);
+            }
+        });
+
+        setInterval(() => {
+            if (player && player.getCurrentTime) {
+                window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                        event: "onProgress",
+                        data: player.getCurrentTime(),
+                    })
+                );
+            }
+        }, queryParams.progressUpdateInterval || 1000);
+    </script>
+			</body>
+		</html>
